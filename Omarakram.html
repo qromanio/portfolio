@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Omar Akram — Creative Web Developer. Based in Egypt. Available Worldwide." />
+<meta name="theme-color" content="#ebebeb" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://api.fontshare.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400&family=Great+Vibes&family=Silkscreen&display=swap" />
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap" />
+
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('theme');
+      if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  })();
+</script>
+
+<style>
+  /* ============================================================
+     1. TOKENS
+     ============================================================ */
+  :root {
+    color-scheme: light dark;
+    --bg:      light-dark(#ebebeb, #121212);
+    --ink:     light-dark(#111111, #f2f2f2);
+    --muted:   light-dark(#7d7d7d, #8a8a8a);
+    --rule:    light-dark(#b0b0b0, #555555);
+    --surface: light-dark(#e0e0e0, #1e1e1e);
+
+    --sun:      light-dark(#e8a800, #ffcc33);
+    --sun-glow: light-dark(rgba(232, 168, 0, 0.0), rgba(255, 204, 51, 0.45));
+
+    --font-serif:  'Instrument Serif', 'Times New Roman', serif;
+    --font-script: 'Great Vibes', cursive;
+    --font-mono:   'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --font-pixel:  'Silkscreen', monospace;
+    --font-sans:   'General Sans', 'Helvetica Neue', Arial, sans-serif;
+
+    --gutter: clamp(1rem, 1.5vw, 1.5rem);
+    --cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+    --row-pad: 10px;
+
+    --fs-hero:  clamp(2.4rem, 3.5vw, 5rem);
+    --fs-desc:  clamp(1.35rem, 2vw, 2.225rem);
+    --fs-body:  0.9375rem;
+    --fs-meta:  0.875rem;
+    --fs-nav:   0.8rem;
+    --fs-label: 0.6875rem;
+
+    --pixel-scale: 0.9;
+
+    --ease-out:    cubic-bezier(.16, 1, .3, 1);
+    --ease-stage2: cubic-bezier(.7, 0, .13, 1);
+    --ease-row:    cubic-bezier(.33, 1, .68, 1);
+  }
+  :root[data-theme="light"] { color-scheme: light; }
+  :root[data-theme="dark"]  { color-scheme: dark;  }
+
+  /* ============================================================
+     2. RESET + BASE
+     ============================================================ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+  html.lenis { scroll-behavior: auto !important; }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+  .lenis.lenis-stopped { overflow: hidden; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.3;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  img { display: block; max-width: 100%; height: auto; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .skip {
+    position: absolute; left: 1rem; top: -3rem; z-index: 100;
+    padding: .5rem .75rem; background: var(--ink); color: var(--bg);
+    font-family: var(--font-mono); font-size: var(--fs-nav);
+    text-decoration: none; transition: top .2s;
+  }
+  .skip:focus { top: 1rem; }
+  :focus-visible { outline: 1px solid currentColor; outline-offset: .15em; }
+
+  /* ============================================================
+     3. FIXED NAV
+     ============================================================ */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: var(--gutter);
+    mix-blend-mode: difference;
+    color: #fff;
+    pointer-events: none;
+    gap: 1.5em;
+  }
+  .nav > * { pointer-events: auto; }
+  .nav__brand, .nav__links a, .nav__contact {
+    font-family: var(--font-mono);
+    font-size: var(--fs-nav);
+    letter-spacing: .02em;
+    text-decoration: none;
+    color: inherit;
+  }
+  .nav__brand { white-space: nowrap; }
+  .nav__links {
+    display: flex; gap: 1.5em; margin: 0; padding: 0; list-style: none;
+  }
+
+  /* Contact is a button — reset to look exactly like the Work link */
+  .nav__contact {
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: var(--fs-nav);
+    letter-spacing: .02em;
+  }
+  .nav__contact[aria-expanded="true"] {
+    text-decoration: underline;
+    text-underline-offset: .2em;
+    text-decoration-thickness: 1px;
+  }
+
+  /* ============================================================
+     3b. CONTACT DROPDOWN PANEL
+     ------------------------------------------------------------
+     Sits OUTSIDE .nav in the DOM (direct child of <body>)
+     because .nav uses mix-blend-mode: difference. A solid
+     panel inside the blend context would have its colors
+     inverted into noise. Position is set by JS.
+     ============================================================ */
+  .contact-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 60;
+    min-width: 280px;
+    max-width: min(360px, calc(100vw - 2rem));
+    padding: 1.25rem 1.5rem;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 2px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    transform: translateY(-6px);
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity .2s ease,
+      transform .2s ease,
+      visibility 0s .2s;
+  }
+  .contact-panel.is-open {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity .2s ease,
+      transform .2s ease,
+      visibility 0s;
+  }
+  .contact-panel__label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: .625rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .55;
+  }
+  .contact-panel__label + .contact-panel__label {
+    margin-top: 1rem;
+  }
+  .contact-panel__label:first-child { margin-top: 0; }
+  .contact-panel__link {
+    display: block;
+    margin-top: .2rem;
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    line-height: 1.25;
+    color: inherit;
+    text-decoration: none;
+    overflow-wrap: break-word;
+  }
+  .contact-panel__link:hover {
+    text-decoration: underline;
+    text-underline-offset: .15em;
+    text-decoration-thickness: 1.5px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-panel,
+    .contact-panel.is-open { transition: none !important; }
+  }
+
+  /* ============================================================
+     4. HERO
+     ============================================================ */
+  .hero {
+    position: sticky; top: 0; z-index: 0;
+    height: 100svh;
+    display: grid; place-items: center;
+    padding-bottom: 10svh;
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .hero__center {
+    position: relative;
+    z-index: 1;
+    width: min(49vw, 58rem);
+    padding: 2rem;
+    text-align: center;
+  }
+  .hero__title {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: var(--fs-hero);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -.015em;
+    text-transform: uppercase;
+  }
+  .hero__title .script {
+    font-family: var(--font-script);
+    font-size: 1.22em;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .hero__title .pixel-line {
+    font-family: var(--font-pixel);
+    font-size: calc(1em * var(--pixel-scale));
+    letter-spacing: 0;
+    text-transform: uppercase;
+    line-height: 1.15;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .hero__sun {
+    display: inline-block;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0 0 0 0.35em;
+    font-family: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols', system-ui, sans-serif;
+    font-size: 0.62em;
+    line-height: 1;
+    vertical-align: 0.12em;
+    color: var(--sun);
+    cursor: pointer;
+    letter-spacing: 0;
+    transition: rotate 1.2s var(--ease-stage2), filter .3s;
+    will-change: rotate;
+    text-shadow: 0 0 0.4em var(--sun-glow);
+  }
+  .hero__sun:hover { rotate: 180deg; filter: brightness(1.1); }
+  .hero__sun:active { filter: brightness(0.95); }
+
+  .hero__meta {
+    position: absolute; bottom: 10svh; margin: 0;
+    display: grid; row-gap: .3em;
+    font-family: var(--font-mono);
+    font-size: var(--fs-meta);
+    line-height: 1.2; letter-spacing: .02em;
+    color: var(--muted);
+  }
+  .hero__meta--left  { left: var(--gutter); }
+  .hero__meta--right { right: var(--gutter); text-align: right; }
+
+  .line { display: block; overflow: hidden; clip-path: inset(0); isolation: isolate; }
+  .line__inner {
+    display: block;
+    transform: translateY(150%);
+    transition: transform 1s var(--ease-out);
+    text-box: trim-both cap alphabetic;
+    will-change: transform;
+  }
+  .line.is-in .line__inner { transform: none; }
+
+  /* ============================================================
+     5. CURSOR TRAIL GRID
+     ============================================================ */
+  .hero__grid {
+    position: absolute; inset: 0;
+    z-index: 2;
+    display: none;
+    pointer-events: none;
+    mix-blend-mode: difference;
+  }
+  @media (hover: hover) and (width >= 800px) {
+    .hero__grid { display: grid; grid-template-columns: repeat(20, 1fr); }
+  }
+  .hero__grid > div {
+    aspect-ratio: 1;
+    background-color: rgba(255, 255, 255, 0);
+  }
+
+  /* ============================================================
+     6. PROJECTS
+     ============================================================ */
+  .projects {
+    position: relative; z-index: 1;
+    padding: 0 var(--gutter) 4rem;
+    background: var(--bg);
+  }
+  .projects__head {
+    display: grid; grid-template-columns: var(--cols);
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: var(--fs-label);
+    letter-spacing: .02em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .projects__head span:last-child { text-align: right; }
+
+  .project {
+    position: relative;
+    border-bottom: 1.5px solid transparent;
+  }
+  .project::after {
+    content: ''; position: absolute; left: 0; bottom: 0;
+    width: 100%; height: 1.5px;
+    background: var(--rule);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 1.5s var(--ease-out) .2s;
+  }
+  .project.is-in::after { transform: scaleX(1); }
+
+  .project__row {
+    position: relative; isolation: isolate; overflow: hidden;
+    display: grid; grid-template-columns: var(--cols);
+    width: 100%; padding: var(--row-pad) 0;
+    background: none; border: 0; text-align: left;
+    font-size: var(--fs-body); color: var(--ink);
+    cursor: pointer;
+  }
+  .project__bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: var(--ink);
+    transform: translateY(var(--from, -100%));
+    display: none;
+  }
+  .project__cell {
+    position: relative; z-index: 1;
+    transition: color .2s, padding .3s;
+  }
+  .project__year { text-align: right; }
+
+  .project__badge {
+    display: inline-block; margin-left: .6em;
+    padding: .05em .45em;
+    border: 1px solid var(--muted); border-radius: 2px;
+    font-family: var(--font-mono);
+    font-size: .58rem; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted);
+    vertical-align: middle;
+    transition: color .2s, border-color .2s;
+  }
+
+  .project__body {
+    display: grid; grid-template-rows: 0fr;
+    transition: grid-template-rows .5s var(--ease-row);
+  }
+  .project.is-open .project__body { grid-template-rows: 1fr; }
+  .project__inner { min-height: 0; overflow: hidden; }
+
+  .project__desc {
+    max-width: 32em; margin: 0; padding-top: 1em;
+    font-size: var(--fs-desc); line-height: 1.25; letter-spacing: -.01em;
+  }
+  .project__link {
+    display: inline-block; margin-top: 1em;
+    font-size: var(--fs-body); text-decoration: underline;
+    text-underline-offset: .15em;
+  }
+  .project__link:hover { text-decoration-thickness: 2px; }
+
+  .project__images {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gutter); padding: 3rem 0 2rem;
+    align-items: start;
+  }
+  .project__images img { width: 100%; background: var(--surface); }
+
+  @media (hover: hover) {
+    .project__bg { display: block; }
+    .project__row.is-hovering .project__bg {
+      transition: transform .25s var(--ease-row);
+      transform: translateY(0);
+    }
+    .project__row.is-hovering .project__cell { color: var(--bg); }
+    .project__row.is-hovering .project__cell:first-of-type { padding-left: .9rem; }
+    .project__row.is-hovering .project__year { padding-right: .9rem; }
+    .project__row.is-hovering .project__badge {
+      color: var(--bg); border-color: var(--bg);
+    }
+  }
+
+  /* ============================================================
+     7. CONTACT (bottom section, unchanged)
+     ============================================================ */
+  .contact {
+    padding: 6rem var(--gutter);
+    border-top: 1.5px solid var(--rule);
+    background: var(--bg);
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-start;
+  }
+  .contact__email {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 4.5rem);
+    text-decoration: underline; text-underline-offset: .1em;
+    text-decoration-thickness: 1px;
+    word-break: break-word;
+    line-height: 1.1;
+  }
+  .contact__email:hover { text-decoration-thickness: 2px; }
+  .contact__phone {
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    letter-spacing: .02em;
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: .15em;
+    text-decoration-thickness: 1px;
+  }
+  .contact__phone:hover { color: var(--ink); text-decoration-thickness: 2px; }
+  .contact__meta {
+    margin: 0; font-family: var(--font-mono);
+    font-size: var(--fs-meta); color: var(--muted);
+  }
+
+  /* ============================================================
+     8. RESPONSIVE
+     ============================================================ */
+  @media (width <= 760px) {
+    :root {
+      --fs-hero: clamp(1.5rem, 7.4vw, 2.4rem);
+      --cols: minmax(0, 1fr) auto;
+    }
+    .nav__brand { display: none; }
+    .hero { place-items: unset; grid-template-rows: 1fr auto; }
+    .hero__center { width: 100%; padding: 3rem .75rem; align-self: center; }
+    .hero__meta { bottom: var(--gutter); }
+    .hero__meta--left, .hero__meta--right { bottom: var(--gutter); }
+    .projects__head { grid-template-columns: minmax(0,1fr) auto; }
+    .projects__head .wide,
+    .project__cell.wide { display: none; }
+    .project__row { grid-template-columns: minmax(0,1fr) auto; }
+    .project__images { grid-template-columns: 1fr; }
+    .project__desc { font-size: 1.35rem; }
+  }
+
+  /* ============================================================
+     9. REDUCED MOTION
+     ============================================================ */
+  @media (prefers-reduced-motion: reduce) {
+    .line__inner { transform: none !important; transition: none !important; }
+    .project__body, .project__cell, .project::after,
+    .hero__sun, .project__badge { transition: none !important; }
+    .project::after { transform: scaleX(1) !important; }
+    .hero__grid { display: none !important; }
+  }
+</style>
+</head>
+
+<body>
+<a class="skip" href="#work">Skip to work</a>
+
+<nav class="nav" aria-label="Primary">
+  <span class="nav__brand">Omar Akram · Creative Web Developer</span>
+  <ul class="nav__links">
+    <li><a href="#work">Work</a></li>
+    <li>
+      <button class="nav__contact" id="contactBtn" type="button"
+              aria-expanded="false" aria-controls="contactPanel">
+        Contact
+      </button>
+    </li>
+  </ul>
+</nav>
+
+<!-- Contact dropdown panel — sits outside .nav to escape its blend mode -->
+<div class="contact-panel" id="contactPanel" aria-label="Contact information" inert>
+  <p class="contact-panel__label">Email</p>
+  <a class="contact-panel__link" href="mailto:omarakram.a16@gmail.com">omarakram.a16@gmail.com</a>
+  <p class="contact-panel__label">Phone</p>
+  <a class="contact-panel__link" href="tel:+201090430931">+20 109 043 0931</a>
+</div>
+
+<section class="hero" id="hero" data-hero>
+  <div class="hero__grid" id="grid" aria-hidden="true"></div>
+
+  <div class="hero__center">
+    <h1 class="hero__title">
+      <span class="line"><span class="line__inner"><span class="script">O</span>mar <span class="script">A</span>kram</span></span>
+      <span class="line"><span class="line__inner"><span class="pixel-line">Creative Web</span></span></span>
+      <span class="line"><span class="line__inner"><span class="pixel-line">Developer</span></span></span>
+      <span class="line"><span class="line__inner">Based in Egypt<button class="hero__sun" data-sun type="button" aria-label="Switch to light theme">&#9728;&#65038;</button></span></span>
+    </h1>
+  </div>
+
+  <p class="hero__meta hero__meta--left"><span>Edition</span><span>026</span></p>
+  <p class="hero__meta hero__meta--right"><span>EG</span><span>GMT+2</span></p>
+</section>
+
+<main>
+  <section class="projects" id="work">
+    <h2 class="sr-only">Selected projects</h2>
+    <div class="projects__head" aria-hidden="true">
+      <span>Project</span>
+      <span class="wide">Category</span>
+      <span class="wide">Client</span>
+      <span>Year</span>
+    </div>
+    <div id="projectList"></div>
+    <noscript>
+      <ul style="padding:1rem 0;font-family:var(--font-sans);font-size:var(--fs-body)">
+        <li>Personal Portfolio — Concept — 2026</li>
+        <li>Athlete Portfolio — Concept — 2026</li>
+        <li>Fashion Brand Website — Concept — 2025</li>
+        <li>Architecture Studio Website — Concept — 2025</li>
+        <li>SaaS Landing Page — Concept — 2025</li>
+        <li>E-commerce Website — Concept — 2024</li>
+        <li>Creative Agency Website — Concept — 2024</li>
+        <li>Interactive Web Experience — Concept — 2024</li>
+      </ul>
+    </noscript>
+  </section>
+
+  <section class="contact" id="contact">
+    <h2 class="sr-only">Contact</h2>
+    <a class="contact__email" href="mailto:omarakram.a16@gmail.com">omarakram.a16@gmail.com</a>
+    <a class="contact__phone" href="tel:+201090430931">+20 109 043 0931</a>
+    <p class="contact__meta">Egypt · Available Worldwide · © 2026</p>
+  </section>
+</main>
+
+<script src="https://unpkg.com/lenis@1.3.26/dist/lenis.min.js"></script>
+
+<script>
+/* ================================================================
+   PROJECT DATA
+   ================================================================ */
+const PROJECTS = [
+  { title: "Personal Portfolio", category: "Design, Development", client: "Self-initiated concept", year: "2026", concept: true, description: "A concept exploration of editorial minimalism — large serif typography, hairline rules, and purposeful motion, built to showcase creative development work without visual noise.", url: null, images: [] },
+  { title: "Athlete Portfolio", category: "Design, Development", client: "Concept project", year: "2026", concept: true, description: "A concept portfolio for a professional athlete — stats, timeline, and media laid out as a quiet editorial document rather than a highlight reel.", url: null, images: [] },
+  { title: "Fashion Brand Website", category: "Web design, Development", client: "Concept project", year: "2025", concept: true, description: "A concept storefront for an independent fashion label, using a strict typographic grid and full-bleed imagery to let the garments carry the page.", url: null, images: [] },
+  { title: "Architecture Studio Website", category: "Web design, Development", client: "Concept project", year: "2025", concept: true, description: "A concept site for an architecture practice — project index as a table, generous whitespace, and slow image reveals that mirror the pace of the work itself.", url: null, images: [] },
+  { title: "SaaS Landing Page", category: "Design, Development", client: "Concept project", year: "2025", concept: true, description: "A concept landing page for a B2B product, built around a single strong statement and a short, honest feature list — no carousels, no gradients.", url: null, images: [] },
+  { title: "E-commerce Website", category: "Development", client: "Concept project", year: "2024", concept: true, description: "A concept commerce experience focused on speed and clarity — a browsable catalogue, a calm product page, and a checkout that gets out of the way.", url: null, images: [] },
+  { title: "Creative Agency Website", category: "Design, Development", client: "Concept project", year: "2024", concept: true, description: "A concept site for a small creative studio, structured as an editorial index of work with a single, confident voice throughout.", url: null, images: [] },
+  { title: "Interactive Web Experience", category: "Development", client: "Concept project", year: "2024", concept: true, description: "A concept experiment in scroll-driven narrative and cursor interaction — motion used to guide attention, never to decorate.", url: null, images: [] }
+];
+
+/* ================================================================
+   LENIS
+   ================================================================ */
+const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let lenis = null;
+if (!prefersReduced && typeof window.Lenis !== 'undefined') {
+  lenis = new Lenis({
+    duration: 1.15,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+  });
+  (function raf(time){ lenis.raf(time); requestAnimationFrame(raf); })(0);
+  window.lenis = lenis;
+}
+function smoothScrollTo(target, opts = {}) {
+  if (!target) return;
+  if (lenis) lenis.scrollTo(target, { offset: 0, duration: 1.2, ...opts });
+  else target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+}
+document.querySelectorAll('a[href^="#"]').forEach((a) => {
+  a.addEventListener('click', (e) => {
+    const id = a.getAttribute('href');
+    if (!id || id === '#') return;
+    const target = document.querySelector(id);
+    if (!target) return;
+    e.preventDefault();
+    smoothScrollTo(target, { offset: -10 });
+  });
+});
+
+/* ================================================================
+   CONTACT DROPDOWN
+   ----------------------------------------------------------------
+   - Opens below the Contact button
+   - Fade + slight slide-down via CSS transition
+   - Closes on outside click, Escape, or pressing the button again
+   - Panel is inert (removed from tab order) when closed
+   - Position recalculated on resize while open
+   ================================================================ */
+(function contactDropdown() {
+  const btn = document.getElementById('contactBtn');
+  const panel = document.getElementById('contactPanel');
+  if (!btn || !panel) return;
+
+  let isOpen = false;
+
+  function position() {
+    const rect = btn.getBoundingClientRect();
+    const rightOffset = Math.max(12, window.innerWidth - rect.right);
+    panel.style.top = Math.round(rect.bottom + 8) + 'px';
+    panel.style.right = Math.round(rightOffset) + 'px';
+  }
+
+  function open() {
+    if (isOpen) return;
+    isOpen = true;
+    position();
+    panel.removeAttribute('inert');
+    // Force reflow so transition runs from the off state each time
+    void panel.offsetWidth;
+    panel.classList.add('is-open');
+    btn.setAttribute('aria-expanded', 'true');
+  }
+
+  function close() {
+    if (!isOpen) return;
+    isOpen = false;
+    panel.classList.remove('is-open');
+    panel.setAttribute('inert', '');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isOpen) close(); else open();
+  });
+
+  // Outside pointerdown closes
+  document.addEventListener('pointerdown', (e) => {
+    if (!isOpen) return;
+    if (panel.contains(e.target) || btn.contains(e.target)) return;
+    close();
+  });
+
+  // Escape closes and returns focus
+  document.addEventListener('keydown', (e) => {
+    if (!isOpen) return;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      close();
+      btn.focus();
+    }
+  });
+
+  // Reposition while open if viewport changes
+  window.addEventListener('resize', () => {
+    if (isOpen) position();
+  });
+})();
+
+/* ================================================================
+   THEME — yellow sun beside "Based in Egypt"
+   ================================================================ */
+(function theme() {
+  const root = document.documentElement;
+  const suns = Array.from(document.querySelectorAll('[data-sun]'));
+  if (!suns.length) return;
+
+  const FILLED_SUN = '\u2600\uFE0E';
+  const OUTLINE_SUN = '\u263C\uFE0E';
+
+  function current() {
+    if (root.dataset.theme === 'dark') return 'dark';
+    if (root.dataset.theme === 'light') return 'light';
+    return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  function apply(theme) {
+    root.dataset.theme = theme;
+    try { localStorage.setItem('theme', theme); } catch (e) {}
+    suns.forEach((s) => {
+      s.textContent = theme === 'dark' ? FILLED_SUN : OUTLINE_SUN;
+      s.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    });
+    const bg = getComputedStyle(document.body).backgroundColor;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', bg);
+  }
+  apply(current());
+
+  suns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      apply(current() === 'dark' ? 'light' : 'dark');
+      if (!prefersReduced) {
+        btn.animate(
+          [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }],
+          { duration: 700, easing: 'cubic-bezier(.7,0,.13,1)' }
+        );
+      }
+    });
+  });
+
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (!root.dataset.theme) apply(current());
+  });
+})();
+
+/* ================================================================
+   HERO: mask-reveal intro
+   ================================================================ */
+(function intro() {
+  const lines = document.querySelectorAll('#hero .line');
+  if (prefersReduced) { lines.forEach((l) => l.classList.add('is-in')); return; }
+  requestAnimationFrame(() => {
+    lines.forEach((l, i) => setTimeout(() => l.classList.add('is-in'), 400 + i * 90));
+  });
+})();
+
+/* ================================================================
+   HERO: scroll fade
+   ================================================================ */
+(function fade() {
+  const hero = document.getElementById('hero');
+  if (!hero) return;
+  let ticking = false;
+  function update() {
+    const p = Math.min(1, window.scrollY / (window.innerHeight * 0.5));
+    hero.style.opacity = String(1 - p);
+    hero.style.visibility = p >= 1 ? 'hidden' : 'visible';
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(update); ticking = true; }
+  }, { passive: true });
+  update();
+})();
+
+/* ================================================================
+   CURSOR TRAIL
+   ================================================================ */
+(function cursorTrail() {
+  const hero = document.getElementById('hero');
+  const el = document.getElementById('grid');
+  if (!hero || !el) return;
+  if (prefersReduced) return;
+  if (!matchMedia('(hover: hover) and (width >= 800px)').matches) return;
+
+  const COLS = 20;
+  const DURATION = 600;
+  const HOLD_FRACTION = 0.12;
+  const EASING = 'cubic-bezier(.16, 1, .3, 1)';
+
+  let cellSize = 0;
+  let rows = 0;
+  let lastX = null;
+  let lastY = null;
+  const cellAnims = new WeakMap();
+
+  const KEYFRAMES = [
+    { backgroundColor: 'rgba(255,255,255,1)', offset: 0, easing: 'linear' },
+    { backgroundColor: 'rgba(255,255,255,1)', offset: HOLD_FRACTION, easing: EASING },
+    { backgroundColor: 'rgba(255,255,255,0)', offset: 1 },
+  ];
+
+  function build() {
+    el.innerHTML = '';
+    const w = el.clientWidth || window.innerWidth;
+    const h = el.clientHeight || window.innerHeight;
+    cellSize = w / COLS;
+    rows = Math.ceil(h / cellSize);
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < COLS * rows; i++) frag.appendChild(document.createElement('div'));
+    el.appendChild(frag);
+    lastX = null;
+    lastY = null;
+  }
+  build();
+
+  let rt;
+  window.addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(build, 150);
+  });
+
+  function cellAt(x, y) {
+    if (x < 0 || x >= COLS || y < 0 || y >= rows) return null;
+    return el.children[y * COLS + x] || null;
+  }
+
+  function lightCell(cell) {
+    let anim = cellAnims.get(cell);
+    if (!anim) {
+      anim = cell.animate(KEYFRAMES, { duration: DURATION, fill: 'none' });
+      cellAnims.set(cell, anim);
+    } else {
+      anim.cancel();
+      anim.play();
+    }
+  }
+
+  hero.addEventListener('pointermove', (e) => {
+    if (hero.style.visibility === 'hidden') {
+      lastX = null;
+      lastY = null;
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0) return;
+    const cx = Math.floor((e.clientX - rect.left) / cellSize);
+    const cy = Math.floor((e.clientY - rect.top) / cellSize);
+
+    if (lastX === null) {
+      const c = cellAt(cx, cy);
+      if (c) lightCell(c);
+    } else {
+      const dx = cx - lastX;
+      const dy = cy - lastY;
+      const steps = Math.max(Math.abs(dx), Math.abs(dy));
+      if (steps > 0) {
+        const limit = Math.min(steps, COLS + rows);
+        for (let i = 0; i <= limit; i++) {
+          const t = i / limit;
+          const x = Math.round(lastX + dx * t);
+          const y = Math.round(lastY + dy * t);
+          const cell = cellAt(x, y);
+          if (cell) lightCell(cell);
+        }
+      }
+    }
+    lastX = cx;
+    lastY = cy;
+  });
+
+  hero.addEventListener('pointerleave', () => {
+    lastX = null;
+    lastY = null;
+  });
+})();
+
+/* ================================================================
+   PROJECTS: render
+   ================================================================ */
+(function renderProjects() {
+  const list = document.getElementById('projectList');
+  if (!list) return;
+  const frag = document.createDocumentFragment();
+  PROJECTS.forEach((p, i) => {
+    const article = document.createElement('article');
+    article.className = 'project';
+    article.dataset.project = '';
+    article.dataset.index = String(i);
+    const badge = p.concept ? '<span class="project__badge">Concept</span>' : '';
+    const link = p.url ? `<a class="project__link" href="${p.url}" target="_blank" rel="noopener noreferrer">See website ↗</a>` : '';
+    const images = (p.images && p.images.length)
+      ? `<div class="project__images">${p.images.map(src => `<img src="${src}" alt="" loading="lazy" width="800" height="600" />`).join('')}</div>`
+      : '';
+    article.innerHTML = `
+      <button class="project__row" type="button" aria-expanded="false" aria-controls="body-${i}">
+        <span class="project__bg" aria-hidden="true"></span>
+        <span class="project__cell"><span class="project__text">${p.title}</span>${badge}</span>
+        <span class="project__cell wide"><span class="project__text">${p.category}</span></span>
+        <span class="project__cell wide"><span class="project__text">${p.client}</span></span>
+        <span class="project__cell project__year"><span class="project__text">${p.year}</span></span>
+      </button>
+      <div class="project__body" id="body-${i}" inert>
+        <div class="project__inner">
+          <p class="project__desc">${p.description}</p>
+          ${link}
+          ${images}
+        </div>
+      </div>
+    `;
+    frag.appendChild(article);
+  });
+  list.appendChild(frag);
+})();
+
+/* ================================================================
+   PROJECTS: accordion
+   ================================================================ */
+(function accordion() {
+  const projects = Array.from(document.querySelectorAll('[data-project]'));
+  let openIdx = null;
+  function close(p) {
+    p.classList.remove('is-open');
+    p.querySelector('.project__row').setAttribute('aria-expanded', 'false');
+    p.querySelector('.project__body').setAttribute('inert', '');
+  }
+  function open(p) {
+    p.classList.add('is-open');
+    p.querySelector('.project__row').setAttribute('aria-expanded', 'true');
+    p.querySelector('.project__body').removeAttribute('inert');
+  }
+  projects.forEach((p, i) => {
+    p.querySelector('.project__row').addEventListener('click', () => {
+      if (openIdx === i) { close(p); openIdx = null; return; }
+      if (openIdx !== null) close(projects[openIdx]);
+      open(p); openIdx = i;
+      if (window.innerWidth < 800) {
+        setTimeout(() => smoothScrollTo(p, { offset: -72, duration: 1 }), 300);
+      }
+    });
+  });
+})();
+
+/* ================================================================
+   PROJECTS: hover invert
+   ================================================================ */
+(function hoverInvert() {
+  if (!matchMedia('(hover: hover)').matches) return;
+  document.querySelectorAll('[data-project]').forEach((p) => {
+    const row = p.querySelector('.project__row');
+    const bg = p.querySelector('.project__bg');
+    if (!row || !bg) return;
+    row.addEventListener('mouseenter', (e) => {
+      const r = row.getBoundingClientRect();
+      bg.style.setProperty('--from', e.clientY < r.top + r.height / 2 ? '-100%' : '100%');
+      row.classList.add('is-hovering');
+    });
+    row.addEventListener('mouseleave', (e) => {
+      const r = row.getBoundingClientRect();
+      bg.style.setProperty('--from', e.clientY < r.top + r.height / 2 ? '-100%' : '100%');
+      row.classList.remove('is-hovering');
+    });
+  });
+})();
+
+/* ================================================================
+   PROJECTS: separator reveal
+   ================================================================ */
+(function separators() {
+  const items = document.querySelectorAll('[data-project]');
+  if (prefersReduced || !('IntersectionObserver' in window)) {
+    items.forEach((p) => p.classList.add('is-in'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-in');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -10% 0px' });
+  items.forEach((p) => io.observe(p));
+})();
+</script>
+</body>
+</html>

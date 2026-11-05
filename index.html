@@ -7,6 +7,14 @@
 <meta name="description" content="Omar Akram — Web Developer. Based in Egypt. Available Worldwide." />
 <meta name="theme-color" content="#ebebeb" />
 
+<!-- ============================================================
+     FAVICON (The icon that appears in the browser tab)
+     Make sure the image file is named 'favicon.png' and sits in
+     the exact same folder as this index.html file.
+     ============================================================ -->
+<link rel="icon" type="image/png" href="./favicon.png" />
+<link rel="apple-touch-icon" href="./favicon.png" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="preconnect" href="https://api.fontshare.com" />
@@ -113,6 +121,8 @@
     color: #fff;
     pointer-events: none;
     gap: 1.5em;
+    padding-top: max(var(--gutter), env(safe-area-inset-top, 0px));
+    padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
   }
   .nav > * { pointer-events: auto; }
   .nav__links {
@@ -120,6 +130,7 @@
     font-family: var(--font-mono);
     font-size: var(--fs-nav);
     letter-spacing: .02em;
+    min-width: 0;
   }
   .nav__links a {
     font-family: var(--font-mono);
@@ -127,6 +138,7 @@
     letter-spacing: .02em;
     text-decoration: none;
     color: inherit;
+    white-space: nowrap;
   }
   .nav__links a:hover {
     text-decoration: underline;
@@ -139,18 +151,22 @@
      ============================================================ */
   .hero {
     position: sticky; top: 0; z-index: 0;
+    height: 100vh;
     height: 100svh;
     display: grid; place-items: center;
     padding-bottom: 10svh;
     background: var(--bg);
     overflow: hidden;
+    max-width: 100vw;
   }
   .hero__center {
     position: relative;
     z-index: 1;
-    width: min(49vw, 58rem);
+    width: min(92vw, 58rem);
+    max-width: 100%;
     padding: 2rem;
     text-align: center;
+    box-sizing: border-box;
   }
   .hero__title {
     margin: 0;
@@ -160,6 +176,7 @@
     line-height: 1;
     letter-spacing: -.015em;
     text-transform: uppercase;
+    text-wrap: balance;
   }
   .hero__title .script {
     font-family: var(--font-script);
@@ -175,10 +192,15 @@
     line-height: 1.15;
     display: inline-block;
     vertical-align: middle;
+    max-width: 100%;
+    white-space: nowrap;
   }
 
   .line--location { padding-block: 0.2em; }
-  .hero__location { font-size: 0.82em; }
+  .hero__location {
+    font-size: 0.82em;
+    white-space: nowrap;
+  }
 
   .hero__meta {
     position: absolute; bottom: 10svh; margin: 0;
@@ -191,7 +213,14 @@
   .hero__meta--left  { left: var(--gutter); }
   .hero__meta--right { right: var(--gutter); text-align: right; }
 
-  .line { display: block; overflow: hidden; clip-path: inset(0); isolation: isolate; }
+  .line {
+    display: block;
+    overflow: hidden;
+    clip-path: inset(0);
+    isolation: isolate;
+    padding-inline: 1.5em;
+    margin-inline: -1.5em;
+  }
   .line__inner {
     display: block;
     transform: translateY(150%);
@@ -230,6 +259,7 @@
     display: none;
     pointer-events: none;
     mix-blend-mode: difference;
+    overflow: hidden;
   }
   @media (hover: hover) and (width >= 800px) {
     .hero__grid { display: grid; grid-template-columns: repeat(20, 1fr); }
@@ -246,6 +276,7 @@
     position: relative; z-index: 1;
     padding: 0 var(--gutter) 4rem;
     background: var(--bg);
+    max-width: 100vw;
   }
   .projects__head {
     display: grid; grid-template-columns: var(--cols);
@@ -271,7 +302,6 @@
   }
   .project.is-in::after { transform: scaleX(1); }
 
-  /* Row — container for the sliding fill */
   .project__row {
     position: relative;
     isolation: isolate;
@@ -281,19 +311,19 @@
     background: none; border: 0; text-align: left;
     font-size: var(--fs-body); color: var(--ink);
     cursor: pointer;
+    max-width: 100%;
   }
-
-  /* Sliding fill — position is driven by --from, animated by CSS transition */
   .project__bg {
     position: absolute; inset: 0; z-index: 0;
     background: var(--ink);
     transform: translateY(var(--from, -100%));
     display: none;
   }
-
   .project__cell {
     position: relative; z-index: 1;
     transition: color .2s, padding .3s;
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
   .project__year { text-align: right; }
 
@@ -306,24 +336,16 @@
     color: var(--muted);
     vertical-align: middle;
     transition: color .2s, border-color .2s;
+    white-space: nowrap;
   }
 
-  /* The direction-aware sliding fill only exists on hover-capable pointers */
   @media (hover: hover) {
     .project__bg { display: block; }
-
-    /* Enable the transform transition only while entering or leaving */
     .project__row.is-hovering .project__bg,
     .project__row.is-leaving .project__bg {
       transition: transform .25s var(--ease-row);
     }
-
-    /* Fill fully covers the row */
-    .project__row.is-hovering .project__bg {
-      transform: translateY(0);
-    }
-
-    /* Text and badge invert to maintain contrast over the fill */
+    .project__row.is-hovering .project__bg { transform: translateY(0); }
     .project__row.is-hovering .project__cell { color: var(--bg); }
     .project__row.is-hovering .project__cell:first-of-type { padding-left: .9rem; }
     .project__row.is-hovering .project__year { padding-right: .9rem; }
@@ -343,26 +365,34 @@
   .project__desc {
     max-width: 32em; margin: 0; padding-top: 1em;
     font-size: var(--fs-desc); line-height: 1.25; letter-spacing: -.01em;
+    overflow-wrap: anywhere;
   }
   .project__link {
     display: inline-block; margin-top: 1em;
     font-size: var(--fs-body); text-decoration: underline;
     text-underline-offset: .15em;
+    overflow-wrap: anywhere;
   }
   .project__link:hover { text-decoration-thickness: 2px; }
 
   .project__images {
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--gutter); padding: 3rem 0 2rem;
     align-items: start;
   }
-  .project__images img { width: 100%; background: var(--surface); }
+  .project__images img {
+    width: 100%;
+    height: auto;
+    background: var(--surface);
+  }
 
   /* ============================================================
      7. FOOTER
      ============================================================ */
   .footer {
     padding: 3rem var(--gutter);
+    padding-bottom: max(3rem, env(safe-area-inset-bottom, 0px));
     border-top: 1.5px solid var(--rule);
     background: var(--bg);
     position: relative; z-index: 1;
@@ -375,27 +405,61 @@
   }
 
   /* ============================================================
-     8. RESPONSIVE
+     8. TABLET REFINEMENT
+     ============================================================ */
+  @media (width <= 900px) and (width >= 761px) {
+    :root {
+      --fs-hero: clamp(2rem, 5vw, 3.5rem);
+    }
+    .hero__center {
+      width: min(95vw, 58rem);
+      padding: 1.5rem;
+    }
+  }
+
+  /* ============================================================
+     9. MOBILE (≤ 760px)
      ============================================================ */
   @media (width <= 760px) {
     :root {
       --fs-hero: clamp(1.5rem, 7.4vw, 2.4rem);
       --cols: minmax(0, 1fr) auto;
     }
-    .hero { place-items: unset; grid-template-rows: 1fr auto; }
-    .hero__center { width: 100%; padding: 3rem .75rem; align-self: center; }
+    .hero {
+      place-items: unset;
+      grid-template-rows: 1fr auto;
+      padding-bottom: 0;
+    }
+    .hero__center {
+      width: 100%;
+      max-width: 100%;
+      padding: 3rem 1rem;
+      align-self: center;
+    }
     .hero__meta { bottom: var(--gutter); }
-    .hero__meta--left, .hero__meta--right { bottom: var(--gutter); }
-    .projects__head { grid-template-columns: minmax(0,1fr) auto; }
+    .hero__meta--left  { left: var(--gutter); }
+    .hero__meta--right { right: var(--gutter); }
+
+    .projects__head { grid-template-columns: minmax(0, 1fr) auto; }
     .projects__head .wide,
     .project__cell.wide { display: none; }
-    .project__row { grid-template-columns: minmax(0,1fr) auto; }
-    .project__images { grid-template-columns: 1fr; }
+    .project__row { grid-template-columns: minmax(0, 1fr) auto; }
+    .project__images { grid-template-columns: minmax(0, 1fr); }
     .project__desc { font-size: 1.35rem; }
   }
 
+  /* Very narrow screens (iPhone SE, small Androids) */
+  @media (width <= 380px) {
+    :root {
+      --fs-hero: clamp(1.35rem, 7.6vw, 2.1rem);
+      --fs-desc: 1.15rem;
+    }
+    .hero__center { padding: 2.5rem .75rem; }
+    .project__desc { font-size: 1.2rem; }
+  }
+
   /* ============================================================
-     9. REDUCED MOTION
+     10. REDUCED MOTION
      ============================================================ */
   @media (prefers-reduced-motion: reduce) {
     .line__inner { transform: none !important; transition: none !important; }
@@ -724,21 +788,7 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 })();
 
 /* ================================================================
-   PROJECTS: direction-aware sliding fill (the "vanishing traces")
-   ----------------------------------------------------------------
-   On mouseenter:
-     - Set --from to the side the cursor entered from
-     - Force reflow so the bg jumps to that side (no transition)
-     - Add .is-hovering → CSS transition slides bg to 0
-
-   On mouseleave:
-     - Set --from to the side the cursor exited toward
-     - Swap .is-hovering for .is-leaving → CSS transition slides
-       bg to the exit side
-     - Remove .is-leaving after the transition completes
-
-   Because each row is fully independent, sweeping across the
-   list leaves a trail of partially-filled rows behind the cursor.
+   PROJECTS: direction-aware sliding fill
    ================================================================ */
 (function rowHoverTrail() {
   if (!matchMedia('(hover: hover)').matches) return;
@@ -756,9 +806,6 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
       const r = row.getBoundingClientRect();
       const fromTop = e.clientY < r.top + r.height / 2;
       bg.style.setProperty('--from', fromTop ? '-100%' : '100%');
-      // Force reflow so the bg commits to the new --from side BEFORE
-      // we add .is-hovering. Without this, the transition would start
-      // from wherever the bg was last left (opposite side on re-entry).
       void bg.offsetWidth;
       row.classList.remove('is-leaving');
       row.classList.add('is-hovering');
@@ -774,7 +821,6 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
       leaveTimer = setTimeout(() => row.classList.remove('is-leaving'), 260);
     });
 
-    // Keyboard: show the same full fill when the row is focused
     row.addEventListener('focus', () => {
       clearTimeout(leaveTimer);
       bg.style.setProperty('--from', '-100%');

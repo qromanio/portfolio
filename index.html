@@ -2,548 +2,203 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Omar Akram — Web Developer</title>
 <meta name="description" content="Omar Akram — Web Developer. Based in Egypt. Available Worldwide." />
 <meta name="theme-color" content="#ebebeb" />
-
-<!-- ============================================================
-     FAVICON 
-     Ensure 'favicon.png' is in the same folder as this HTML file
-     ============================================================ -->
+<!-- Keep favicon.png in the same folder as this file -->
 <link rel="icon" type="image/png" href="./favicon.png" />
 <link rel="apple-touch-icon" href="./favicon.png" />
-
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="preconnect" href="https://api.fontshare.com" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400&family=Great+Vibes&family=Silkscreen&display=swap" />
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap" />
-
 <script>
-  (function () {
-    try {
-      var t = localStorage.getItem('theme');
-      if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
-    } catch (e) {}
-  })();
+(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}})();
 </script>
-
 <style>
-  /* ============================================================
-     1. TOKENS
-     ============================================================ */
-  :root {
-    color-scheme: light dark;
-    --bg:      light-dark(#ebebeb, #121212);
-    --ink:     light-dark(#111111, #f2f2f2);
-    --muted:   light-dark(#7d7d7d, #8a8a8a);
-    --rule:    light-dark(#b0b0b0, #555555);
-    --surface: light-dark(#e0e0e0, #1e1e1e);
+/* 1. TOKENS — plain values + dark overrides (no light-dark(), so older phones work) */
+:root{
+  color-scheme:light dark;
+  --bg:#ebebeb;--ink:#111;--muted:#7d7d7d;--rule:#b0b0b0;--surface:#e0e0e0;
+  --sun:#e8a800;--sun-glow:rgba(232,168,0,0);
+  --font-serif:'Instrument Serif','Times New Roman',serif;
+  --font-script:'Great Vibes',cursive;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --font-pixel:'Silkscreen',monospace;
+  --font-sans:'General Sans','Helvetica Neue',Arial,sans-serif;
+  --gutter:clamp(1rem,1.5vw,1.5rem);
+  --cols:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto;
+  --row-pad:10px;
+  --fs-hero:clamp(2.4rem,3.5vw,5rem);
+  --fs-desc:clamp(1.35rem,2vw,2.225rem);
+  --fs-body:.9375rem;--fs-meta:.875rem;--fs-nav:.8rem;--fs-label:.6875rem;
+  --pixel-scale:.9;
+  --ease-out:cubic-bezier(.16,1,.3,1);
+  --ease-stage2:cubic-bezier(.7,0,.13,1);
+  --ease-row:cubic-bezier(.33,1,.68,1);
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-r:env(safe-area-inset-right,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-l:env(safe-area-inset-left,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#121212;--ink:#f2f2f2;--muted:#8a8a8a;--rule:#555;--surface:#1e1e1e;--sun:#fc3;--sun-glow:rgba(255,204,51,.45)}
+}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#121212;--ink:#f2f2f2;--muted:#8a8a8a;--rule:#555;--surface:#1e1e1e;--sun:#fc3;--sun-glow:rgba(255,204,51,.45)}
 
-    --sun:      light-dark(#e8a800, #ffcc33);
-    --sun-glow: light-dark(rgba(232, 168, 0, 0.0), rgba(255, 204, 51, 0.45));
+/* 2. RESET + BASE */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+html.lenis{scroll-behavior:auto!important}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+.lenis.lenis-stopped{overflow:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.3;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+button{font:inherit;color:inherit}
+a,button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip{position:absolute;left:max(1rem,var(--safe-l));top:-3rem;z-index:100;padding:.5rem .75rem;background:var(--ink);color:var(--bg);font-family:var(--font-mono);font-size:var(--fs-nav);text-decoration:none;transition:top .2s}
+.skip:focus{top:1rem}
+:focus-visible{outline:1px solid currentColor;outline-offset:.15em}
 
-    --font-serif:  'Instrument Serif', 'Times New Roman', serif;
-    --font-script: 'Great Vibes', cursive;
-    --font-mono:   'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-    --font-pixel:  'Silkscreen', monospace;
-    --font-sans:   'General Sans', 'Helvetica Neue', Arial, sans-serif;
+/* 2b. FOLLOWER CURSOR (mouse devices only) */
+.cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;mix-blend-mode:difference;opacity:0;transition:opacity .3s ease;will-change:transform}
+.cursor-dot{width:6px;height:6px;border-radius:50%;background:#fff;transform:translate(-50%,-50%)}
+.cursor-ring{width:var(--ring-size,24px);height:var(--ring-size,24px);aspect-ratio:1/1;border:var(--ring-border,1.5px) solid var(--ring-color,rgba(255,255,255,.55));border-radius:50%;transform:translate(-50%,-50%);transition:opacity .3s ease,width .35s cubic-bezier(.83,0,.17,1),height .35s cubic-bezier(.83,0,.17,1),border-color .35s ease}
+.cursor-dot.is-active,.cursor-ring.is-active{opacity:1}
+.cursor-ring.is-hovering{width:var(--ring-hover-size,44px);height:var(--ring-hover-size,44px);border-color:rgba(255,255,255,.9)}
+@media (hover:none),(pointer:coarse){.cursor-dot,.cursor-ring{display:none}}
+@media (hover:hover) and (pointer:fine) and (min-width:800px) and (prefers-reduced-motion:no-preference){
+  html,html *,html *::before,html *::after{cursor:none!important}
+  input,textarea,[contenteditable="true"]{cursor:text!important}
+}
 
-    --gutter: clamp(1rem, 1.5vw, 1.5rem);
-    --cols: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
-    --row-pad: 10px;
+/* 3. NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:flex-end;align-items:center;gap:1.5em;padding:var(--gutter);padding-top:max(var(--gutter),var(--safe-t));padding-right:max(var(--gutter),var(--safe-r));mix-blend-mode:difference;color:#fff;pointer-events:none}
+.nav>*{pointer-events:auto}
+.nav__links{display:flex;gap:1.5em;margin:0;padding:0;list-style:none;min-width:0}
+.nav__links a{font-family:var(--font-mono);font-size:var(--fs-nav);letter-spacing:.02em;text-decoration:none;color:inherit;white-space:nowrap}
+.nav__links a:hover{text-decoration:underline;text-underline-offset:.2em;text-decoration-thickness:1px}
 
-    --fs-hero:  clamp(2.4rem, 3.5vw, 5rem);
-    --fs-desc:  clamp(1.35rem, 2vw, 2.225rem);
-    --fs-body:  0.9375rem;
-    --fs-meta:  0.875rem;
-    --fs-nav:   0.8rem;
-    --fs-label: 0.6875rem;
+/* 4. HERO */
+.hero{position:sticky;top:0;z-index:0;height:100vh;height:100svh;display:grid;place-items:center;padding-bottom:10svh;background:var(--bg);overflow:hidden;max-width:100vw}
+.hero__center{position:relative;z-index:1;width:min(92vw,58rem);max-width:100%;padding:2rem;text-align:center}
+.hero__title{margin:0;font-family:var(--font-serif);font-size:var(--fs-hero);font-weight:400;line-height:1;letter-spacing:-.015em;text-transform:uppercase;text-wrap:balance}
+.hero__title .script{font-family:var(--font-script);font-size:1.22em;text-transform:none;letter-spacing:0}
+.hero__title .pixel-line{font-family:var(--font-pixel);font-size:calc(1em*var(--pixel-scale));letter-spacing:0;text-transform:uppercase;line-height:1.15;display:inline-block;vertical-align:middle;max-width:100%;white-space:nowrap}
+.line--location{padding-block:.2em}
+.hero__location{font-size:.82em;white-space:nowrap}
+.hero__meta{position:absolute;bottom:10svh;margin:0;display:grid;row-gap:.3em;font-family:var(--font-mono);font-size:var(--fs-meta);line-height:1.2;letter-spacing:.02em;color:var(--muted)}
+.hero__meta--left{left:max(var(--gutter),var(--safe-l))}
+.hero__meta--right{right:max(var(--gutter),var(--safe-r));text-align:right}
+.line{display:block;overflow:hidden;clip-path:inset(0);isolation:isolate;padding-inline:1.5em;margin-inline:-1.5em}
+.line__inner{display:block;transform:translateY(150%);transition:transform 1s var(--ease-out);text-box:trim-both cap alphabetic;will-change:transform}
+.line.is-in .line__inner{transform:none}
+.sun-toggle{display:inline-block;background:none;border:0;padding:0;margin:0 0 0 .35em;font-family:'Segoe UI Symbol','Apple Symbols','Noto Sans Symbols',system-ui,sans-serif;font-size:.95em;line-height:1;vertical-align:.05em;color:var(--sun);cursor:pointer;letter-spacing:0;transition:rotate 1.2s var(--ease-stage2),filter .3s;will-change:rotate;text-shadow:0 0 .4em var(--sun-glow)}
+.sun-toggle:hover{rotate:180deg;filter:brightness(1.1)}
+.sun-toggle:active{filter:brightness(.95)}
 
-    --pixel-scale: 0.9;
+/* 5. CURSOR TRAIL GRID (desktop only) */
+.hero__grid{position:absolute;inset:0;z-index:2;display:none;pointer-events:none;mix-blend-mode:difference;overflow:hidden}
+@media (hover:hover) and (min-width:800px){.hero__grid{display:grid;grid-template-columns:repeat(20,1fr)}}
+.hero__grid>div{aspect-ratio:1;background-color:rgba(255,255,255,0)}
 
-    --ease-out:    cubic-bezier(.16, 1, .3, 1);
-    --ease-stage2: cubic-bezier(.7, 0, .13, 1);
-    --ease-row:    cubic-bezier(.33, 1, .68, 1);
-  }
-  :root[data-theme="light"] { color-scheme: light; }
-  :root[data-theme="dark"]  { color-scheme: dark;  }
+/* 6. PROJECTS */
+.projects{position:relative;z-index:1;padding:0 var(--gutter) 4rem;padding-left:max(var(--gutter),var(--safe-l));padding-right:max(var(--gutter),var(--safe-r));background:var(--bg);max-width:100vw}
+.projects__head{display:grid;grid-template-columns:var(--cols);padding-bottom:8px;border-bottom:1.5px solid var(--rule);font-family:var(--font-mono);font-size:var(--fs-label);letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+.projects__head span:last-child{text-align:right}
+.project{position:relative;border-bottom:1.5px solid transparent}
+.project::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:1.5px;background:var(--rule);transform:scaleX(0);transform-origin:left;transition:transform 1.5s var(--ease-out) .2s}
+.project.is-in::after{transform:scaleX(1)}
+.project__row{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:var(--cols);width:100%;max-width:100%;padding:var(--row-pad) 0;background:none;border:0;text-align:left;font-size:var(--fs-body);color:var(--ink);cursor:pointer}
+.project__bg{position:absolute;inset:0;z-index:0;background:var(--ink);transform:translateY(var(--from,-100%));display:none}
+.project__cell{position:relative;z-index:1;transition:color .2s,padding .3s;min-width:0;overflow-wrap:anywhere}
+.project__year{text-align:right}
+.project__badge{display:inline-block;margin-left:.6em;padding:.05em .45em;border:1px solid var(--muted);border-radius:2px;font-family:var(--font-mono);font-size:.58rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);vertical-align:middle;transition:color .2s,border-color .2s;white-space:nowrap}
+@media (hover:hover){
+  .project__bg{display:block}
+  .project__row.is-hovering .project__bg,.project__row.is-leaving .project__bg{transition:transform .25s var(--ease-row)}
+  .project__row.is-hovering .project__bg{transform:translateY(0)}
+  .project__row.is-hovering .project__cell{color:var(--bg)}
+  .project__row.is-hovering .project__cell:first-of-type{padding-left:.9rem}
+  .project__row.is-hovering .project__year{padding-right:.9rem}
+  .project__row.is-hovering .project__badge{color:var(--bg);border-color:var(--bg)}
+}
+.project__body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease-row)}
+.project.is-open .project__body{grid-template-rows:1fr}
+.project__inner{min-height:0;overflow:hidden}
+.project__desc{max-width:32em;margin:0;padding-top:1em;font-size:var(--fs-desc);line-height:1.25;letter-spacing:-.01em;overflow-wrap:anywhere}
+.project__link{display:inline-block;margin-top:1em;font-size:var(--fs-body);text-decoration:underline;text-underline-offset:.15em;overflow-wrap:anywhere}
+.project__link:hover{text-decoration-thickness:2px}
+.project__images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gutter);padding:3rem 0 2rem;align-items:start}
+.project__images img{width:100%;height:auto;background:var(--surface)}
 
-  /* ============================================================
-     2. RESET + BASE
-     ============================================================ */
-  *, *::before, *::after { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-  html.lenis { scroll-behavior: auto !important; }
-  html.lenis, html.lenis body { height: auto; }
-  .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-  .lenis.lenis-stopped { overflow: hidden; }
+/* 7. FOOTER */
+.footer{position:relative;z-index:1;padding:3rem var(--gutter);padding-left:max(var(--gutter),var(--safe-l));padding-right:max(var(--gutter),var(--safe-r));padding-bottom:max(3rem,calc(var(--safe-b) + 1.5rem));border-top:1.5px solid var(--rule);background:var(--bg)}
+.footer__meta{margin:0;font-family:var(--font-mono);font-size:var(--fs-meta);color:var(--muted)}
 
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--font-sans);
-    font-size: 16px;
-    line-height: 1.3;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    overflow-x: hidden;
-    cursor: none; /* Hide native cursor for custom follower */
-  }
-  @media (hover: none), (prefers-reduced-motion: reduce) {
-    body { cursor: auto; }
-  }
+/* 8. TABLET */
+@media (max-width:900px) and (min-width:761px){
+  :root{--fs-hero:clamp(2rem,5vw,3.5rem)}
+  .hero__center{width:min(95vw,58rem);padding:1.5rem}
+}
 
-  img { display: block; max-width: 100%; height: auto; }
-  a { color: inherit; }
-  button { font: inherit; color: inherit; }
+/* 9. PHONES (≤760px) */
+@media (max-width:760px){
+  :root{--fs-hero:clamp(1.5rem,7.4vw,2.4rem);--cols:minmax(0,1fr) auto}
+  .hero{place-items:unset;grid-template-rows:1fr auto;padding-bottom:0}
+  .hero__center{width:100%;padding:3rem max(1rem,var(--safe-r)) 3rem max(1rem,var(--safe-l));align-self:center}
+  .hero__title .pixel-line{font-size:min(calc(1em*var(--pixel-scale)),6.8vw)}
+  .hero__meta{bottom:max(var(--gutter),calc(var(--safe-b) + .5rem))}
+  .projects__head{grid-template-columns:minmax(0,1fr) auto}
+  .projects__head .wide,.project__cell.wide{display:none}
+  .project__row{grid-template-columns:minmax(0,1fr) auto}
+  .project__images{grid-template-columns:minmax(0,1fr)}
+  .project__desc{font-size:1.35rem}
+}
+/* Small phones (iPhone SE, compact Androids) */
+@media (max-width:380px){
+  :root{--fs-hero:clamp(1.35rem,7.6vw,2.1rem);--fs-desc:1.15rem}
+  .hero__center{padding-block:2.5rem}
+  .project__desc{font-size:1.2rem}
+}
+/* Very narrow (Galaxy Fold cover screen etc.) */
+@media (max-width:340px){
+  :root{--gutter:.75rem}
+  .project__badge{margin-left:.4em}
+}
+/* Short landscape phones */
+@media (orientation:landscape) and (max-height:500px){
+  :root{--fs-hero:clamp(1.4rem,8.5vh,2.6rem)}
+  .hero__center{padding-block:1rem}
+  .hero__meta{bottom:max(var(--gutter),var(--safe-b))}
+}
+/* Touch: bigger tap targets, tap feedback, no sticky hover */
+@media (pointer:coarse){
+  .project__row{min-height:48px;align-items:center}
+  .nav__links a{display:inline-block;padding:1.1em .8em;margin:-1.1em -.8em}
+  .sun-toggle{padding:.5em .6em;margin:-.5em -.6em -.5em -.25em}
+  .line--location{padding-block:.5em}
+  .project__link{padding-block:.6em;margin-top:.4em}
+}
+@media (hover:none){
+  .sun-toggle:hover{rotate:none;filter:none}
+  .project__row:active{opacity:.55}
+}
 
-  .sr-only {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-  }
-  .skip {
-    position: absolute; left: 1rem; top: -3rem; z-index: 100;
-    padding: .5rem .75rem; background: var(--ink); color: var(--bg);
-    font-family: var(--font-mono); font-size: var(--fs-nav);
-    text-decoration: none; transition: top .2s;
-  }
-  .skip:focus { top: 1rem; }
-  :focus-visible { outline: 1px solid currentColor; outline-offset: .15em; }
-
-  /* ============================================================
-     2b. CUSTOM FOLLOWER CURSOR
-     ------------------------------------------------------------
-     Ring diameter is configurable via --ring-size / --ring-hover-size.
-     box-sizing: border-box + border-radius: 50% guarantees a perfect
-     circle with consistent border thickness at every size.
-     ============================================================ */
-  .cursor-dot,
-  .cursor-ring {
-    position: fixed; top: 0; left: 0;
-    pointer-events: none;
-    z-index: 9999;
-    mix-blend-mode: difference;
-    opacity: 0;
-    transition: opacity .3s ease;
-    will-change: transform;
-  }
-
-  /* Center dot — stays 6px, always centered via translate(-50%, -50%) in JS */
-  .cursor-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #fff;
-    transform: translate(-50%, -50%);
-  }
-
-  /* Ring — diameter driven entirely by CSS vars set from JS */
-  .cursor-ring {
-    width:  var(--ring-size, 24px);
-    height: var(--ring-size, 24px);
-    box-sizing: border-box;
-    border: var(--ring-border, 1.5px) solid var(--ring-color, rgba(255,255,255,0.55));
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition:
-      opacity .3s ease,
-      width .35s cubic-bezier(.83, 0, .17, 1),
-      height .35s cubic-bezier(.83, 0, .17, 1),
-      border-color .35s ease;
-    aspect-ratio: 1 / 1;   /* belt-and-braces: never distort */
-  }
-
-  .cursor-dot.is-active,
-  .cursor-ring.is-active { opacity: 1; }
-
-  .cursor-ring.is-hovering {
-    width:  var(--ring-hover-size, 44px);
-    height: var(--ring-hover-size, 44px);
-    border-color: rgba(255,255,255,0.9);
-  }
-
-  @media (hover: none), (prefers-reduced-motion: reduce) {
-    .cursor-dot, .cursor-ring { display: none; }
-  }
-
-  /* Hide every native cursor on desktop, including the browser hand pointer. */
-  @media (hover: hover) and (pointer: fine) and (width >= 800px) {
-    html,
-    html *,
-    html *::before,
-    html *::after {
-      cursor: none !important;
-    }
-
-    /* Preserve the text insertion cursor in editable fields. */
-    input,
-    textarea,
-    [contenteditable="true"] {
-      cursor: text !important;
-    }
-  }
-
-  /* ============================================================
-     3. FIXED NAV
-     ============================================================ */
-  .nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-    display: flex; justify-content: flex-end; align-items: center;
-    padding: var(--gutter);
-    mix-blend-mode: difference;
-    color: #fff;
-    pointer-events: none;
-    gap: 1.5em;
-    padding-top: max(var(--gutter), env(safe-area-inset-top, 0px));
-    padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
-  }
-  .nav > * { pointer-events: auto; }
-  .nav__links {
-    display: flex; gap: 1.5em; margin: 0; padding: 0; list-style: none;
-    font-family: var(--font-mono);
-    font-size: var(--fs-nav);
-    letter-spacing: .02em;
-    min-width: 0;
-  }
-  .nav__links a {
-    font-family: var(--font-mono);
-    font-size: var(--fs-nav);
-    letter-spacing: .02em;
-    text-decoration: none;
-    color: inherit;
-    white-space: nowrap;
-  }
-  .nav__links a:hover {
-    text-decoration: underline;
-    text-underline-offset: .2em;
-    text-decoration-thickness: 1px;
-  }
-
-  /* ============================================================
-     4. HERO
-     ============================================================ */
-  .hero {
-    position: sticky; top: 0; z-index: 0;
-    height: 100vh;
-    height: 100svh;
-    display: grid; place-items: center;
-    padding-bottom: 10svh;
-    background: var(--bg);
-    overflow: hidden;
-    max-width: 100vw;
-  }
-  .hero__center {
-    position: relative;
-    z-index: 1;
-    width: min(92vw, 58rem);
-    max-width: 100%;
-    padding: 2rem;
-    text-align: center;
-    box-sizing: border-box;
-  }
-  .hero__title {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-size: var(--fs-hero);
-    font-weight: 400;
-    line-height: 1;
-    letter-spacing: -.015em;
-    text-transform: uppercase;
-    text-wrap: balance;
-  }
-  .hero__title .script {
-    font-family: var(--font-script);
-    font-size: 1.22em;
-    text-transform: none;
-    letter-spacing: 0;
-  }
-  .hero__title .pixel-line {
-    font-family: var(--font-pixel);
-    font-size: calc(1em * var(--pixel-scale));
-    letter-spacing: 0;
-    text-transform: uppercase;
-    line-height: 1.15;
-    display: inline-block;
-    vertical-align: middle;
-    max-width: 100%;
-    white-space: nowrap;
-  }
-
-  .line--location { padding-block: 0.2em; }
-  .hero__location {
-    font-size: 0.82em;
-    white-space: nowrap;
-  }
-
-  .hero__meta {
-    position: absolute; bottom: 10svh; margin: 0;
-    display: grid; row-gap: .3em;
-    font-family: var(--font-mono);
-    font-size: var(--fs-meta);
-    line-height: 1.2; letter-spacing: .02em;
-    color: var(--muted);
-  }
-  .hero__meta--left  { left: var(--gutter); }
-  .hero__meta--right { right: var(--gutter); text-align: right; }
-
-  .line {
-    display: block;
-    overflow: hidden;
-    clip-path: inset(0);
-    isolation: isolate;
-    padding-inline: 1.5em;
-    margin-inline: -1.5em;
-  }
-  .line__inner {
-    display: block;
-    transform: translateY(150%);
-    transition: transform 1s var(--ease-out);
-    text-box: trim-both cap alphabetic;
-    will-change: transform;
-  }
-  .line.is-in .line__inner { transform: none; }
-
-  .sun-toggle {
-    display: inline-block;
-    background: none;
-    border: 0;
-    padding: 0;
-    margin: 0 0 0 0.35em;
-    font-family: 'Segoe UI Symbol', 'Apple Symbols', 'Noto Sans Symbols', system-ui, sans-serif;
-    font-size: 0.95em;
-    line-height: 1;
-    vertical-align: 0.05em;
-    color: var(--sun);
-    cursor: pointer;
-    letter-spacing: 0;
-    transition: rotate 1.2s var(--ease-stage2), filter .3s;
-    will-change: rotate;
-    text-shadow: 0 0 0.4em var(--sun-glow);
-  }
-  .sun-toggle:hover { rotate: 180deg; filter: brightness(1.1); }
-  .sun-toggle:active { filter: brightness(0.95); }
-
-  /* ============================================================
-     5. CURSOR TRAIL GRID — HERO
-     ============================================================ */
-  .hero__grid {
-    position: absolute; inset: 0;
-    z-index: 2;
-    display: none;
-    pointer-events: none;
-    mix-blend-mode: difference;
-    overflow: hidden;
-  }
-  @media (hover: hover) and (width >= 800px) {
-    .hero__grid { display: grid; grid-template-columns: repeat(20, 1fr); }
-  }
-  .hero__grid > div {
-    aspect-ratio: 1;
-    background-color: rgba(255, 255, 255, 0);
-  }
-
-  /* ============================================================
-     6. PROJECTS
-     ============================================================ */
-  .projects {
-    position: relative; z-index: 1;
-    padding: 0 var(--gutter) 4rem;
-    background: var(--bg);
-    max-width: 100vw;
-  }
-  .projects__head {
-    display: grid; grid-template-columns: var(--cols);
-    padding-bottom: 8px;
-    border-bottom: 1.5px solid var(--rule);
-    font-family: var(--font-mono);
-    font-size: var(--fs-label);
-    letter-spacing: .02em; text-transform: uppercase;
-    color: var(--muted);
-  }
-  .projects__head span:last-child { text-align: right; }
-
-  .project {
-    position: relative;
-    border-bottom: 1.5px solid transparent;
-  }
-  .project::after {
-    content: ''; position: absolute; left: 0; bottom: 0;
-    width: 100%; height: 1.5px;
-    background: var(--rule);
-    transform: scaleX(0); transform-origin: left;
-    transition: transform 1.5s var(--ease-out) .2s;
-  }
-  .project.is-in::after { transform: scaleX(1); }
-
-  .project__row {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    display: grid; grid-template-columns: var(--cols);
-    width: 100%; padding: var(--row-pad) 0;
-    background: none; border: 0; text-align: left;
-    font-size: var(--fs-body); color: var(--ink);
-    cursor: pointer;
-    max-width: 100%;
-  }
-  .project__bg {
-    position: absolute; inset: 0; z-index: 0;
-    background: var(--ink);
-    transform: translateY(var(--from, -100%));
-    display: none;
-  }
-  .project__cell {
-    position: relative; z-index: 1;
-    transition: color .2s, padding .3s;
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-  .project__year { text-align: right; }
-
-  .project__badge {
-    display: inline-block; margin-left: .6em;
-    padding: .05em .45em;
-    border: 1px solid var(--muted); border-radius: 2px;
-    font-family: var(--font-mono);
-    font-size: .58rem; letter-spacing: .06em; text-transform: uppercase;
-    color: var(--muted);
-    vertical-align: middle;
-    transition: color .2s, border-color .2s;
-    white-space: nowrap;
-  }
-
-  @media (hover: hover) {
-    .project__bg { display: block; }
-    .project__row.is-hovering .project__bg,
-    .project__row.is-leaving .project__bg {
-      transition: transform .25s var(--ease-row);
-    }
-    .project__row.is-hovering .project__bg { transform: translateY(0); }
-    .project__row.is-hovering .project__cell { color: var(--bg); }
-    .project__row.is-hovering .project__cell:first-of-type { padding-left: .9rem; }
-    .project__row.is-hovering .project__year { padding-right: .9rem; }
-    .project__row.is-hovering .project__badge {
-      color: var(--bg); border-color: var(--bg);
-    }
-  }
-
-  /* Accordion */
-  .project__body {
-    display: grid; grid-template-rows: 0fr;
-    transition: grid-template-rows .5s var(--ease-row);
-  }
-  .project.is-open .project__body { grid-template-rows: 1fr; }
-  .project__inner { min-height: 0; overflow: hidden; }
-
-  .project__desc {
-    max-width: 32em; margin: 0; padding-top: 1em;
-    font-size: var(--fs-desc); line-height: 1.25; letter-spacing: -.01em;
-    overflow-wrap: anywhere;
-  }
-  .project__link {
-    display: inline-block; margin-top: 1em;
-    font-size: var(--fs-body); text-decoration: underline;
-    text-underline-offset: .15em;
-    overflow-wrap: anywhere;
-  }
-  .project__link:hover { text-decoration-thickness: 2px; }
-
-  .project__images {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--gutter); padding: 3rem 0 2rem;
-    align-items: start;
-  }
-  .project__images img {
-    width: 100%;
-    height: auto;
-    background: var(--surface);
-  }
-
-  /* ============================================================
-     7. FOOTER
-     ============================================================ */
-  .footer {
-    padding: 3rem var(--gutter);
-    padding-bottom: max(3rem, env(safe-area-inset-bottom, 0px));
-    border-top: 1.5px solid var(--rule);
-    background: var(--bg);
-    position: relative; z-index: 1;
-  }
-  .footer__meta {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: var(--fs-meta);
-    color: var(--muted);
-  }
-
-  /* ============================================================
-     8. TABLET REFINEMENT
-     ============================================================ */
-  @media (width <= 900px) and (width >= 761px) {
-    :root {
-      --fs-hero: clamp(2rem, 5vw, 3.5rem);
-    }
-    .hero__center {
-      width: min(95vw, 58rem);
-      padding: 1.5rem;
-    }
-  }
-
-  /* ============================================================
-     9. MOBILE (≤ 760px)
-     ============================================================ */
-  @media (width <= 760px) {
-    :root {
-      --fs-hero: clamp(1.5rem, 7.4vw, 2.4rem);
-      --cols: minmax(0, 1fr) auto;
-    }
-    .hero {
-      place-items: unset;
-      grid-template-rows: 1fr auto;
-      padding-bottom: 0;
-    }
-    .hero__center {
-      width: 100%;
-      max-width: 100%;
-      padding: 3rem 1rem;
-      align-self: center;
-    }
-    .hero__meta { bottom: var(--gutter); }
-    .hero__meta--left  { left: var(--gutter); }
-    .hero__meta--right { right: var(--gutter); }
-
-    .projects__head { grid-template-columns: minmax(0, 1fr) auto; }
-    .projects__head .wide,
-    .project__cell.wide { display: none; }
-    .project__row { grid-template-columns: minmax(0, 1fr) auto; }
-    .project__images { grid-template-columns: minmax(0, 1fr); }
-    .project__desc { font-size: 1.35rem; }
-  }
-
-  /* Very narrow screens (iPhone SE, small Androids) */
-  @media (width <= 380px) {
-    :root {
-      --fs-hero: clamp(1.35rem, 7.6vw, 2.1rem);
-      --fs-desc: 1.15rem;
-    }
-    .hero__center { padding: 2.5rem .75rem; }
-    .project__desc { font-size: 1.2rem; }
-  }
-
-  /* ============================================================
-     10. REDUCED MOTION
-     ============================================================ */
-  @media (prefers-reduced-motion: reduce) {
-    .line__inner { transform: none !important; transition: none !important; }
-    .project__bg, .project__cell, .project__body, .project::after,
-    .sun-toggle, .project__badge { transition: none !important; }
-    .project::after { transform: scaleX(1) !important; }
-    .hero__grid { display: none !important; }
-  }
+/* 10. REDUCED MOTION */
+@media (prefers-reduced-motion:reduce){
+  .line__inner{transform:none!important;transition:none!important}
+  .project__bg,.project__cell,.project__body,.project::after,.sun-toggle,.project__badge{transition:none!important}
+  .project::after{transform:scaleX(1)!important}
+  .hero__grid{display:none!important}
+}
 </style>
 </head>
 
@@ -558,7 +213,6 @@
 
 <section class="hero" id="hero" data-hero>
   <div class="hero__grid" id="grid" aria-hidden="true"></div>
-
   <div class="hero__center">
     <h1 class="hero__title">
       <span class="line"><span class="line__inner"><span class="script">O</span>mar <span class="script">A</span>kram</span></span>
@@ -566,7 +220,6 @@
       <span class="line line--location"><span class="line__inner hero__location">Based in Egypt<button class="sun-toggle" data-sun type="button" aria-label="Switch to light theme">&#9728;&#65038;</button></span></span>
     </h1>
   </div>
-
   <p class="hero__meta hero__meta--left"><span>Edition</span><span>026</span></p>
   <p class="hero__meta hero__meta--right"><span>GMT+2</span></p>
 </section>
@@ -601,11 +254,7 @@
 </footer>
 
 <script src="https://unpkg.com/lenis@1.3.26/dist/lenis.min.js"></script>
-
 <script>
-/* ================================================================
-   PROJECT DATA
-   ================================================================ */
 const PROJECTS = [
   { title: "Personal Portfolio", category: "Design, Development", client: "Self-initiated concept", year: "2026", concept: true, description: "A concept exploration of editorial minimalism — large serif typography, hairline rules, and purposeful motion, built to showcase creative development work without visual noise.", url: null, images: [] },
   { title: "Athlete Portfolio", category: "Design, Development", client: "Concept project", year: "2026", concept: true, description: "A concept portfolio for a professional athlete — stats, timeline, and media laid out as a quiet editorial document rather than a highlight reel.", url: null, images: [] },
@@ -617,17 +266,11 @@ const PROJECTS = [
   { title: "Interactive Web Experience", category: "Development", client: "Concept project", year: "2024", concept: true, description: "A concept experiment in scroll-driven narrative and cursor interaction — motion used to guide attention, never to decorate.", url: null, images: [] }
 ];
 
-/* ================================================================
-   LENIS
-   ================================================================ */
+/* LENIS (wheel smoothing only; touch scrolling stays native) */
 const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let lenis = null;
 if (!prefersReduced && typeof window.Lenis !== 'undefined') {
-  lenis = new Lenis({
-    duration: 1.15,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true,
-  });
+  lenis = new Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true });
   (function raf(time){ lenis.raf(time); requestAnimationFrame(raf); })(0);
   window.lenis = lenis;
 }
@@ -647,281 +290,158 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   });
 });
 
-/* ================================================================
-   THEME
-   ================================================================ */
+/* THEME */
 (function theme() {
   const root = document.documentElement;
   const suns = Array.from(document.querySelectorAll('[data-sun]'));
   if (!suns.length) return;
-
-  const FILLED_SUN = '\u2600\uFE0E';
-  const OUTLINE_SUN = '\u263C\uFE0E';
-
+  const FILLED = '\u2600\uFE0E', OUTLINE = '\u263C\uFE0E';
   function current() {
     if (root.dataset.theme === 'dark') return 'dark';
     if (root.dataset.theme === 'light') return 'light';
     return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
-  function apply(theme) {
-    root.dataset.theme = theme;
-    try { localStorage.setItem('theme', theme); } catch (e) {}
+  function apply(t) {
+    root.dataset.theme = t;
+    try { localStorage.setItem('theme', t); } catch (e) {}
     suns.forEach((s) => {
-      s.textContent = theme === 'dark' ? FILLED_SUN : OUTLINE_SUN;
-      s.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+      s.textContent = t === 'dark' ? FILLED : OUTLINE;
+      s.setAttribute('aria-label', t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
     });
-    const bg = getComputedStyle(document.body).backgroundColor;
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', bg);
+    if (meta) meta.setAttribute('content', getComputedStyle(document.body).backgroundColor);
   }
   apply(current());
-
-  suns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      apply(current() === 'dark' ? 'light' : 'dark');
-      if (!prefersReduced) {
-        btn.animate(
-          [{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }],
-          { duration: 700, easing: 'cubic-bezier(.7,0,.13,1)' }
-        );
-      }
-    });
-  });
-
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (!root.dataset.theme) apply(current());
-  });
+  suns.forEach((btn) => btn.addEventListener('click', () => {
+    apply(current() === 'dark' ? 'light' : 'dark');
+    if (!prefersReduced && btn.animate) {
+      btn.animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }], { duration: 700, easing: 'cubic-bezier(.7,0,.13,1)' });
+    }
+  }));
 })();
 
-/* ================================================================
-   HERO: mask-reveal intro
-   ================================================================ */
+/* HERO: mask-reveal intro */
 (function intro() {
   const lines = document.querySelectorAll('#hero .line');
   if (prefersReduced) { lines.forEach((l) => l.classList.add('is-in')); return; }
-  requestAnimationFrame(() => {
-    lines.forEach((l, i) => setTimeout(() => l.classList.add('is-in'), 400 + i * 90));
-  });
+  requestAnimationFrame(() => lines.forEach((l, i) => setTimeout(() => l.classList.add('is-in'), 400 + i * 90)));
 })();
 
-/* ================================================================
-   HERO: scroll fade
-   ================================================================ */
+/* HERO: scroll fade (clamped so iOS rubber-banding can't push it past 0–1) */
 (function fade() {
   const hero = document.getElementById('hero');
   if (!hero) return;
   let ticking = false;
   function update() {
-    const p = Math.min(1, window.scrollY / (window.innerHeight * 0.5));
+    const p = Math.max(0, Math.min(1, window.scrollY / (window.innerHeight * 0.5)));
     hero.style.opacity = String(1 - p);
     hero.style.visibility = p >= 1 ? 'hidden' : 'visible';
     ticking = false;
   }
-  window.addEventListener('scroll', () => {
-    if (!ticking) { requestAnimationFrame(update); ticking = true; }
-  }, { passive: true });
+  window.addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(update); ticking = true; } }, { passive: true });
   update();
 })();
 
-/* ================================================================
-   HERO: cursor trail grid
-   ================================================================ */
+/* HERO: cursor trail grid (desktop only) */
 (function cursorTrail() {
   const hero = document.getElementById('hero');
   const el = document.getElementById('grid');
-  if (!hero || !el) return;
-  if (prefersReduced) return;
-  if (!matchMedia('(hover: hover) and (width >= 800px)').matches) return;
+  if (!hero || !el || prefersReduced) return;
+  if (!matchMedia('(hover: hover) and (min-width: 800px)').matches) return;
 
-  const COLS = 20;
-  const DURATION = 600;
-  const HOLD_FRACTION = 0.12;
-  const EASING = 'cubic-bezier(.16, 1, .3, 1)';
-
-  let cellSize = 0;
-  let rows = 0;
-  let lastX = null;
-  let lastY = null;
+  const COLS = 20, DURATION = 600, HOLD = 0.12, EASING = 'cubic-bezier(.16, 1, .3, 1)';
+  let cellSize = 0, rows = 0, lastX = null, lastY = null;
   const cellAnims = new WeakMap();
-
   const KEYFRAMES = [
     { backgroundColor: 'rgba(255,255,255,1)', offset: 0, easing: 'linear' },
-    { backgroundColor: 'rgba(255,255,255,1)', offset: HOLD_FRACTION, easing: EASING },
+    { backgroundColor: 'rgba(255,255,255,1)', offset: HOLD, easing: EASING },
     { backgroundColor: 'rgba(255,255,255,0)', offset: 1 },
   ];
-
   function build() {
     el.innerHTML = '';
-    const w = el.clientWidth || window.innerWidth;
-    const h = el.clientHeight || window.innerHeight;
+    const w = el.clientWidth || window.innerWidth, h = el.clientHeight || window.innerHeight;
     cellSize = w / COLS;
     rows = Math.ceil(h / cellSize);
     const frag = document.createDocumentFragment();
     for (let i = 0; i < COLS * rows; i++) frag.appendChild(document.createElement('div'));
     el.appendChild(frag);
-    lastX = null;
-    lastY = null;
+    lastX = lastY = null;
   }
   build();
-
   let rt;
-  window.addEventListener('resize', () => {
-    clearTimeout(rt);
-    rt = setTimeout(build, 150);
-  });
-
-  function cellAt(x, y) {
-    if (x < 0 || x >= COLS || y < 0 || y >= rows) return null;
-    return el.children[y * COLS + x] || null;
-  }
-
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 150); });
+  function cellAt(x, y) { return (x < 0 || x >= COLS || y < 0 || y >= rows) ? null : (el.children[y * COLS + x] || null); }
   function lightCell(cell) {
     let anim = cellAnims.get(cell);
-    if (!anim) {
-      anim = cell.animate(KEYFRAMES, { duration: DURATION, fill: 'none' });
-      cellAnims.set(cell, anim);
-    } else {
-      anim.cancel();
-      anim.play();
-    }
+    if (!anim) { anim = cell.animate(KEYFRAMES, { duration: DURATION, fill: 'none' }); cellAnims.set(cell, anim); }
+    else { anim.cancel(); anim.play(); }
   }
-
   hero.addEventListener('pointermove', (e) => {
-    if (hero.style.visibility === 'hidden') {
-      lastX = null;
-      lastY = null;
-      return;
-    }
+    if (hero.style.visibility === 'hidden') { lastX = lastY = null; return; }
     const rect = el.getBoundingClientRect();
     if (rect.width === 0) return;
     const cx = Math.floor((e.clientX - rect.left) / cellSize);
     const cy = Math.floor((e.clientY - rect.top) / cellSize);
-
     if (lastX === null) {
       const c = cellAt(cx, cy);
       if (c) lightCell(c);
     } else {
-      const dx = cx - lastX;
-      const dy = cy - lastY;
+      const dx = cx - lastX, dy = cy - lastY;
       const steps = Math.max(Math.abs(dx), Math.abs(dy));
       if (steps > 0) {
         const limit = Math.min(steps, COLS + rows);
         for (let i = 0; i <= limit; i++) {
           const t = i / limit;
-          const x = Math.round(lastX + dx * t);
-          const y = Math.round(lastY + dy * t);
-          const cell = cellAt(x, y);
+          const cell = cellAt(Math.round(lastX + dx * t), Math.round(lastY + dy * t));
           if (cell) lightCell(cell);
         }
       }
     }
-    lastX = cx;
-    lastY = cy;
+    lastX = cx; lastY = cy;
   });
-
-  hero.addEventListener('pointerleave', () => {
-    lastX = null;
-    lastY = null;
-  });
+  hero.addEventListener('pointerleave', () => { lastX = lastY = null; });
 })();
 
-/* ================================================================
-   CUSTOM FOLLOWER CURSOR — independent circular ring component
-   ================================================================ */
-function createCircularCursorRing({
-  size = 20,
-  hoverSize = 34,
-  borderWidth = 1.5,
-  color = 'rgba(255,255,255,0.55)',
-} = {}) {
-  const el = document.createElement('div');
-  el.className = 'cursor-ring';
-  el.setAttribute('aria-hidden', 'true');
-  el.style.setProperty('--ring-size', `${size}px`);
-  el.style.setProperty('--ring-hover-size', `${hoverSize}px`);
-  el.style.setProperty('--ring-border', `${borderWidth}px`);
-  el.style.setProperty('--ring-color', color);
-  document.body.appendChild(el);
-
-  return {
-    el,
-    show()       { el.classList.add('is-active'); },
-    hide()       { el.classList.remove('is-active'); },
-    setHover(on) { el.classList.toggle('is-hovering', on); },
-    move(x, y)   { el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`; },
-  };
-}
-
-(function initFollowerCursor() {
-  const hasHover = matchMedia('(hover: hover)').matches;
-  if (!hasHover || prefersReduced) return;
-
+/* FOLLOWER CURSOR (fine-pointer devices only — never on phones) */
+(function followerCursor() {
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches || prefersReduced) return;
   const LERP = 0.16;
+  const ring = document.createElement('div');
+  ring.className = 'cursor-ring';
+  ring.setAttribute('aria-hidden', 'true');
+  ring.style.setProperty('--ring-size', '20px');
+  ring.style.setProperty('--ring-hover-size', '34px');
+  const dot = document.createElement('div');
+  dot.className = 'cursor-dot';
+  dot.setAttribute('aria-hidden', 'true');
+  document.body.append(ring, dot);
 
-  function createDot() {
-    const el = document.createElement('div');
-    el.className = 'cursor-dot';
-    el.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(el);
-
-    return {
-      el,
-      show()     { el.classList.add('is-active'); },
-      hide()     { el.classList.remove('is-active'); },
-      move(x, y) { el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`; },
-    };
-  }
-
-  const ring = createCircularCursorRing({
-    size: 20,
-    hoverSize: 34,
-    borderWidth: 1.5,
-    color: 'rgba(255,255,255,0.55)',
-  });
-  const dot = createDot();
-
-  let mx = 0, my = 0;
-  let rx = 0, ry = 0;
-  let rafId = null;
-
+  let mx = 0, my = 0, rx = 0, ry = 0, rafId = null;
+  const at = (el, x, y) => { el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`; };
   document.addEventListener('mousemove', (e) => {
     mx = e.clientX; my = e.clientY;
-    dot.move(mx, my);
-    dot.show();
-    ring.show();
-
+    at(dot, mx, my);
+    dot.classList.add('is-active');
+    ring.classList.add('is-active');
     if (!rafId) rafId = requestAnimationFrame(tick);
   });
-
   document.addEventListener('mouseleave', () => {
-    dot.hide();
-    ring.hide();
+    dot.classList.remove('is-active');
+    ring.classList.remove('is-active');
   });
-
   function tick() {
     rx += (mx - rx) * LERP;
     ry += (my - ry) * LERP;
-    ring.move(rx, ry);
-
-    if (Math.abs(mx - rx) > 0.4 || Math.abs(my - ry) > 0.4) {
-      rafId = requestAnimationFrame(tick);
-    } else {
-      rafId = null;
-    }
+    at(ring, rx, ry);
+    rafId = (Math.abs(mx - rx) > 0.4 || Math.abs(my - ry) > 0.4) ? requestAnimationFrame(tick) : null;
   }
-
-  const interactives = document.querySelectorAll(
-    'a, button, [data-magnetic], .project__row'
-  );
-  interactives.forEach((el) => {
-    el.addEventListener('mouseenter', () => ring.setHover(true));
-    el.addEventListener('mouseleave', () => ring.setHover(false));
+  document.querySelectorAll('a, button, [data-magnetic], .project__row').forEach((el) => {
+    el.addEventListener('mouseenter', () => ring.classList.add('is-hovering'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('is-hovering'));
   });
 })();
 
-/* ================================================================
-   PROJECTS: render
-   ================================================================ */
+/* PROJECTS: render */
 (function renderProjects() {
   const list = document.getElementById('projectList');
   if (!list) return;
@@ -950,67 +470,48 @@ function createCircularCursorRing({
           ${link}
           ${images}
         </div>
-      </div>
-    `;
+      </div>`;
     frag.appendChild(article);
   });
   list.appendChild(frag);
 })();
 
-/* ================================================================
-   PROJECTS: direction-aware sliding fill
-   ================================================================ */
+/* PROJECTS: direction-aware sliding fill (hover devices only) */
 (function rowHoverTrail() {
-  if (!matchMedia('(hover: hover)').matches) return;
-  if (prefersReduced) return;
-
+  if (!matchMedia('(hover: hover)').matches || prefersReduced) return;
   document.querySelectorAll('[data-project]').forEach((p) => {
     const row = p.querySelector('.project__row');
     const bg = p.querySelector('.project__bg');
     if (!row || !bg) return;
-
     let leaveTimer;
-
-    row.addEventListener('mouseenter', (e) => {
+    function enter(from) {
       clearTimeout(leaveTimer);
-      const r = row.getBoundingClientRect();
-      const fromTop = e.clientY < r.top + r.height / 2;
-      bg.style.setProperty('--from', fromTop ? '-100%' : '100%');
+      bg.style.setProperty('--from', from);
       void bg.offsetWidth;
       row.classList.remove('is-leaving');
       row.classList.add('is-hovering');
+    }
+    function leave(to) {
+      bg.style.setProperty('--from', to);
+      row.classList.remove('is-hovering');
+      row.classList.add('is-leaving');
+      clearTimeout(leaveTimer);
+      leaveTimer = setTimeout(() => row.classList.remove('is-leaving'), 260);
+    }
+    row.addEventListener('mouseenter', (e) => {
+      const r = row.getBoundingClientRect();
+      enter(e.clientY < r.top + r.height / 2 ? '-100%' : '100%');
     });
-
     row.addEventListener('mouseleave', (e) => {
       const r = row.getBoundingClientRect();
-      const toTop = e.clientY < r.top + r.height / 2;
-      bg.style.setProperty('--from', toTop ? '-100%' : '100%');
-      row.classList.remove('is-hovering');
-      row.classList.add('is-leaving');
-      clearTimeout(leaveTimer);
-      leaveTimer = setTimeout(() => row.classList.remove('is-leaving'), 260);
+      leave(e.clientY < r.top + r.height / 2 ? '-100%' : '100%');
     });
-
-    row.addEventListener('focus', () => {
-      clearTimeout(leaveTimer);
-      bg.style.setProperty('--from', '-100%');
-      void bg.offsetWidth;
-      row.classList.remove('is-leaving');
-      row.classList.add('is-hovering');
-    });
-    row.addEventListener('blur', () => {
-      bg.style.setProperty('--from', '100%');
-      row.classList.remove('is-hovering');
-      row.classList.add('is-leaving');
-      clearTimeout(leaveTimer);
-      leaveTimer = setTimeout(() => row.classList.remove('is-leaving'), 260);
-    });
+    row.addEventListener('focus', () => enter('-100%'));
+    row.addEventListener('blur', () => leave('100%'));
   });
 })();
 
-/* ================================================================
-   PROJECTS: accordion
-   ================================================================ */
+/* PROJECTS: accordion */
 (function accordion() {
   const projects = Array.from(document.querySelectorAll('[data-project]'));
   let openIdx = null;
@@ -1029,28 +530,19 @@ function createCircularCursorRing({
       if (openIdx === i) { close(p); openIdx = null; return; }
       if (openIdx !== null) close(projects[openIdx]);
       open(p); openIdx = i;
-      if (window.innerWidth < 800) {
-        setTimeout(() => smoothScrollTo(p, { offset: -72, duration: 1 }), 300);
-      }
+      /* wait for the previous panel to finish collapsing (.5s) so the scroll lands in the right place */
+      if (window.innerWidth < 800) setTimeout(() => smoothScrollTo(p, { offset: -72, duration: 1 }), 520);
     });
   });
 })();
 
-/* ================================================================
-   PROJECTS: separator reveal
-   ================================================================ */
+/* PROJECTS: separator reveal */
 (function separators() {
   const items = document.querySelectorAll('[data-project]');
-  if (prefersReduced || !('IntersectionObserver' in window)) {
-    items.forEach((p) => p.classList.add('is-in'));
-    return;
-  }
+  if (prefersReduced || !('IntersectionObserver' in window)) { items.forEach((p) => p.classList.add('is-in')); return; }
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-in');
-        io.unobserve(entry.target);
-      }
+      if (entry.isIntersecting) { entry.target.classList.add('is-in'); io.unobserve(entry.target); }
     });
   }, { rootMargin: '0px 0px -10% 0px' });
   items.forEach((p) => io.observe(p));
